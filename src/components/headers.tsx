@@ -19,14 +19,14 @@ export const Header: React.FC<HeaderProps> = ({ onSearch }) => {
           className="header__search-input"
           onChange={(e) => onSearch(e.target.value)}
         />
-        <button className="header__search-btn">search</button>
+        <button className="header__search-btn">Искать</button>
         <button className="header__filter-btn">
         <img src="/assets/images/settings.png" alt="settings-icon" />
         </button>
       </div>
 
       <div className="header__right">
-        <span className="header__user-name">Your Name</span>
+        <span className="header__user-name">Имя пользователя</span>
         <button className="header__profile-btn">
         <img src="/assets/images/user.png" alt="user-icon" />
         </button>

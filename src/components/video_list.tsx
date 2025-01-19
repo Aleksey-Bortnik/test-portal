@@ -5,6 +5,7 @@ import { response } from "src/api/response";
 import { Video } from "src/types/video.type";
 import { fetchVideos } from "src/app/slice/video.slice";
 import { Card } from "src/components/card";
+import { FeaturedCard } from "src/components/featured_card";
 import "./video_list.scss";
 
 const defaultPerPage = 12;
@@ -74,10 +75,12 @@ export function VideoList({ searchQuery }: VideoListProps) {
 
   const sortedVideos = getSortedVideos(videos);
   const filteredVideos = getFilteredVideos(sortedVideos, searchQuery);
-  const paginatedVideos = getPaginatedVideos(filteredVideos, currentPage, perPage);
 
+  const featuredVideo = sortedVideos[0];
+
+  const paginatedVideos = getPaginatedVideos(filteredVideos, currentPage, perPage);
   const totalPages = Math.ceil(filteredVideos.length / perPage);
- 
+
   const handlePerPageChange = (value: number) => {
     setPerPage(value);
     setCurrentPage(1);
@@ -85,6 +88,9 @@ export function VideoList({ searchQuery }: VideoListProps) {
 
   return (
     <div className="video-list-container">
+    
+      {featuredVideo && <FeaturedCard video={featuredVideo} />}
+
       <div className="sort-controls">
         <label htmlFor="sort-select">Сортировать по:</label>
         <select
@@ -109,9 +115,8 @@ export function VideoList({ searchQuery }: VideoListProps) {
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
-              className={`pagination__button ${
-                page === currentPage ? "active" : ""
-              }`}
+              className={`pagination__button ${page === currentPage ? "active" : ""
+                }`}
               onClick={() => setCurrentPage(page)}
             >
               {page}
