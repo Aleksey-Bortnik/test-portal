@@ -46,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, onFilterChange }) => {
             className="header__filter-btn"
             onClick={() => setIsFilterVisible(!isFilterVisible)}
           >
-            <img src="/assets/images/settings.png" alt="settings-icon" />
+            <img src="/assets/images/search_settings.svg" alt="settings-icon" />
           </button>
           {isFilterVisible && (
             <ul className="header__filter-dropdown">
