@@ -1,8 +1,10 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./card.scss";
 
 interface CardProps {
   video: {
+    id: string,
     snippet: {
       title: string;
       channelTitle: string;
@@ -60,7 +62,9 @@ export const Card: React.FC<CardProps> = ({ video }) => {
           </div>
         </div>
       </div>
-      <div className="card__button">Подробнее</div>
+      <Link to={`/video/${video.id}`} className="card__button">
+        Подробнее
+      </Link>
     </div>
   );
 };
