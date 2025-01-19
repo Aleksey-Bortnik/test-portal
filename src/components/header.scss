@@ -111,3 +111,37 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+.header__filter-container {
+  position: relative;
+  display: inline-block;
+
+  .header__filter-dropdown {
+    position: absolute;
+    top: 50px; /* Расположено под кнопкой */
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    z-index: 1000;
+    list-style: none;
+
+    .header__filter-option {
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #333;
+
+      &:hover {
+        background-color: #f0f0f0;
+      }
+
+      &.active {
+        font-weight: bold;
+        background-color: #e0e0e0;
+      }
+    }
+  }
+}

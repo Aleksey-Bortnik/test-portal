@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import { VideoList } from "src/components/video_list";
-import { Header } from "src/components/headers";
+import { Header } from "../components/headers";
+import { VideoList } from "../components/video_list";
 
 export function MainPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sortType, setSortType] = useState<string>("newest");
 
   return (
     <div>
-      <Header onSearch={setSearchQuery} />
-      <VideoList searchQuery={searchQuery} />
+      <Header
+        onSearch={setSearchQuery}
+        onFilterChange={setSortType}
+      />
+      <VideoList searchQuery={searchQuery} sortType={sortType} />
     </div>
   );
 }

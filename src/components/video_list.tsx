@@ -1,27 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "src/app/store";
-import { response } from "src/api/response";
 import { Video } from "src/types/video.type";
-import { fetchVideos } from "src/app/slice/video.slice";
 import { Card } from "src/components/card";
 import { FeaturedCard } from "src/components/featured_card";
+import { fetchVideos } from "src/app/slice/video.slice";
 import "./video_list.scss";
-
-const defaultPerPage = 12;
-const perPageOptions = [12, 20, 32, 56];
 
 interface VideoListProps {
   searchQuery: string;
+  sortType: string;
 }
 
-export function VideoList({ searchQuery }: VideoListProps) {
-  const videos = useSelector((state: RootState) => state.videoReducer.videos);
+export function VideoList({ searchQuery, sortType }: VideoListProps) {
   const dispatch = useDispatch();
-
-  const [sortType, setSortType] = useState<string>("newest");
+  const videos = useSelector((state: RootState) => state.videoReducer.videos);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [perPage, setPerPage] = useState<number>(defaultPerPage);
+  const [perPage, setPerPage] = useState<number>(12);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/items");
+        const data = await response.json();
+        dispatch(fetchVideos(data));
+      } catch (error) {
+        console.error("Error fetching videos:", error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
 
   const getSortedVideos = (videos: Video[]) => {
     switch (sortType) {
@@ -46,64 +55,19 @@ export function VideoList({ searchQuery }: VideoListProps) {
     }
   };
 
-  const getFilteredVideos = (videos: Video[], query: string) => {
-    if (!query) return videos;
-    return videos.filter((video) =>
-      video.snippet.title.toLowerCase().includes(query.toLowerCase())
-    );
-  };
-
-  const getPaginatedVideos = (videos: Video[], page: number, perPage: number) => {
-    const startIndex = (page - 1) * perPage;
+  const getPaginatedVideos = (videos: Video[]) => {
+    const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
     return videos.slice(startIndex, endIndex);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/items');
-        const data = await response.json();
-        dispatch(fetchVideos(data));
-      } catch (error) {
-        console.error('Error fetching videos:', error);
-      }
-    };
-
-    fetchData();
-  }, [dispatch]);
-
   const sortedVideos = getSortedVideos(videos);
-  const filteredVideos = getFilteredVideos(sortedVideos, searchQuery);
-
-  const featuredVideo = sortedVideos[0];
-
-  const paginatedVideos = getPaginatedVideos(filteredVideos, currentPage, perPage);
-  const totalPages = Math.ceil(filteredVideos.length / perPage);
-
-  const handlePerPageChange = (value: number) => {
-    setPerPage(value);
-    setCurrentPage(1);
-  };
+  const paginatedVideos = getPaginatedVideos(sortedVideos);
+  const totalPages = Math.ceil(sortedVideos.length / perPage);
 
   return (
     <div className="video-list-container">
-    
-      {featuredVideo && <FeaturedCard video={featuredVideo} />}
-
-      <div className="sort-controls">
-        <label htmlFor="sort-select">Сортировать по:</label>
-        <select
-          id="sort-select"
-          value={sortType}
-          onChange={(e) => setSortType(e.target.value)}
-        >
-          <option value="newest">Новые → Старые</option>
-          <option value="oldest">Старые → Новые</option>
-          <option value="title">По заголовку</option>
-        </select>
-      </div>
-
+      {sortedVideos.length > 0 && <FeaturedCard video={sortedVideos[0]} />}
       <div className="video-list">
         {paginatedVideos.map((video) => (
           <Card key={video.id} video={video} />
@@ -115,8 +79,9 @@ export function VideoList({ searchQuery }: VideoListProps) {
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
-              className={`pagination__button ${page === currentPage ? "active" : ""
-                }`}
+              className={`pagination__button ${
+                page === currentPage ? "active" : ""
+              }`}
               onClick={() => setCurrentPage(page)}
             >
               {page}
@@ -126,9 +91,9 @@ export function VideoList({ searchQuery }: VideoListProps) {
         <select
           className="pagination__per-page"
           value={perPage}
-          onChange={(e) => handlePerPageChange(Number(e.target.value))}
+          onChange={(e) => setPerPage(Number(e.target.value))}
         >
-          {perPageOptions.map((option) => (
+          {[12, 20, 32, 56].map((option) => (
             <option key={option} value={option}>
               {option} / page
             </option>
