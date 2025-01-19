@@ -13,7 +13,7 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, onFilterChange }) => {
   const handleSortChange = (newSortType: string) => {
     setSortType(newSortType);
     onFilterChange(newSortType);
-    setIsFilterVisible(false); // Закрываем меню после выбора
+    setIsFilterVisible(false);
   };
 
   return (
