@@ -29,15 +29,15 @@ export const Card: React.FC<CardProps> = ({ video }) => {
         <div className="card__channel">{video.snippet.channelTitle}</div>
         <div className="card__stats">
           <div className="card__stat">
-            <img src="/assets/images/views.png" alt="views" />
+            <img src="/assets/images/viewed.png" alt="views" />
             {video.statistics.viewCount}
           </div>
           <div className="card__stat">
-            <img src="/assets/images/likes.png" alt="likes" />
+            <img src="/assets/images/liked.png" alt="likes" />
             {video.statistics.likeCount}
           </div>
           <div className="card__stat">
-            <img src="/assets/images/dislikes.png" alt="dislikes" />
+            <img src="/assets/images/dislike.png" alt="dislikes" />
             {video.statistics.dislikeCount}
           </div>
         </div>
