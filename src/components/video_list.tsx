@@ -11,7 +11,6 @@ interface VideoListProps {
   searchQuery: string;
   sortType: string;
 }
-
 export function VideoList({ searchQuery, sortType }: VideoListProps) {
   const dispatch = useDispatch();
   const videos = useSelector((state: RootState) => state.videoReducer.videos);
@@ -31,6 +30,17 @@ export function VideoList({ searchQuery, sortType }: VideoListProps) {
 
     fetchData();
   }, [dispatch]);
+  const getFilteredVideos = (videos: Video[]) => {
+    let filtered = videos;
+
+    if (searchQuery) {
+      filtered = filtered.filter((video) =>
+        video.snippet.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    return filtered;
+  };
 
   const getSortedVideos = (videos: Video[]) => {
     switch (sortType) {
@@ -54,16 +64,16 @@ export function VideoList({ searchQuery, sortType }: VideoListProps) {
         return videos;
     }
   };
-
   const getPaginatedVideos = (videos: Video[]) => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
     return videos.slice(startIndex, endIndex);
   };
 
-  const sortedVideos = getSortedVideos(videos);
+  const filteredVideos = getFilteredVideos(videos);
+  const sortedVideos = getSortedVideos(filteredVideos);
   const paginatedVideos = getPaginatedVideos(sortedVideos);
-  const totalPages = Math.ceil(sortedVideos.length / perPage);
+  const totalPages = Math.ceil(filteredVideos.length / perPage);
 
   return (
     <div className="video-list-container">

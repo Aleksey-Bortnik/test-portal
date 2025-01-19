@@ -9,6 +9,13 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onSearch, onFilterChange }) => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [sortType, setSortType] = useState("newest");
+  const [searchText, setSearchText] = useState("");
+
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchText(value);
+    onSearch(value);
+  };
 
   const handleSortChange = (newSortType: string) => {
     setSortType(newSortType);
@@ -25,11 +32,14 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, onFilterChange }) => {
       <div className="header__center">
         <input
           type="text"
+          value={searchText}
           placeholder="Что бы ты хотел посмотреть?"
           className="header__search-input"
-          onChange={(e) => onSearch(e.target.value)}
+          onChange={handleSearchInput} 
         />
-        <button className="header__search-btn">Искать</button>
+        <button className="header__search-btn" onClick={() => onSearch(searchText)}>
+          Искать
+        </button>
 
         <div className="header__filter-container">
           <button
