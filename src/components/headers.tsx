@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import "./header.scss";
+import videoApi from "src/api/videos.api";
+import { Video } from "src/types/video.type";
+import { v4 } from "uuid";
+import { useDispatch } from "react-redux";
+import { fetchVideos } from "src/app/slice/video.slice";
 
 interface HeaderProps {
   onSearch: (query: string) => void;
@@ -10,13 +15,52 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, onFilterChange }) => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [sortType, setSortType] = useState("newest");
   const [searchText, setSearchText] = useState("");
-  const [isModalOpen, setModalOpen] = useState(false); // Добавлено определение состояния для модального окна
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    imgUrl: "",
+    link: "",
+  });
+  const dispatch = useDispatch()
 
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchText(value);
     onSearch(value);
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleOnSumbit = async (e: React.ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const existingVideo = await videoApi.list()
+    const overwritedVideo: Video = {
+      ...existingVideo[0],
+      id: v4(),
+      snippet: {
+        ...existingVideo[0].snippet,
+        title: formData.title,
+        description: formData.description,
+        thumbnails: {
+          ...existingVideo[0].snippet.thumbnails,
+          high: {
+            ...existingVideo[0].snippet.thumbnails.high,
+            url: formData.imgUrl
+          }
+        }
+      },
+    }
+    await videoApi.post(overwritedVideo)
+    dispatch(fetchVideos(await videoApi.list()))
+    setModalOpen(false)
+  }
 
   const handleSortChange = (newSortType: string) => {
     setSortType(newSortType);
@@ -93,27 +137,50 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, onFilterChange }) => {
         </button>
       </div>
 
-      {/* Модальное окно */}
       {isModalOpen && (
         <div
           className="modal-overlay"
-          onClick={() => setModalOpen(false)} // Закрытие модального окна при клике вне него
+          onClick={() => setModalOpen(false)}
         >
           <div
             className="modal"
-            onClick={(e) => e.stopPropagation()} // Останавливаем клик внутри модального окна
+            onClick={(e) => e.stopPropagation()}
           >
             <h2>Create new card</h2>
-            <form className="modal__form">
+            <form className="modal__form" onSubmit={handleOnSumbit}>
               <label>Title</label>
-              <input type="text" placeholder="Title" />
+              <input 
+                type="text" 
+                placeholder="Title"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+              />
               <label>Description</label>
-              <input type="text" placeholder="Description" />
+              <input 
+                type="text" 
+                placeholder="Description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+              />
               <label>Image</label>
-              <input type="text" placeholder="Image URL" />
+              <input 
+                type="text" 
+                placeholder="Image URL"
+                name="imgUrl"
+                value={formData.imgUrl}
+                onChange={handleChange}
+              />
               <label>Video Link</label>
-              <input type="text" placeholder="Video link" />
-              <button type="button" className="modal__submit-btn">
+              <input 
+                type="text" 
+                placeholder="Video link"
+                name="link"
+                value={formData.link}
+                onChange={handleChange}
+              />
+              <button type="submit" className="modal__submit-btn">
                 Create card
               </button>
             </form>
