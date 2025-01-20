@@ -1,20 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FeaturedCard } from "../components/featured_card";
-import { response } from "../api/response";
 import { Video } from "../types/video.type";
 import { Header } from "../components/headers";
 import "./card_info.scss";
+import videoApi from "src/api/videos.api";
 
 export function CardInfo() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [video, setVideo] = useState<Video | null>(null);
 
-    useEffect(() => {
-        const videoData = response.items.find((item) => item.id === id) || null;
-        setVideo(videoData);
-    }, [id]);
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await videoApi.getById(id!)
+            setVideo(response);
+          } catch (error) {
+            console.error("Error fetching videos:", error);
+          }
+        };
+    
+        fetchData();
+      }, [id]);
 
     if (!video) {
         return <div className="card-info__error">

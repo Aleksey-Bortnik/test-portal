@@ -6,6 +6,7 @@ import { Card } from "src/components/card";
 import { FeaturedCard } from "src/components/featured_card";
 import { fetchVideos } from "src/app/slice/video.slice";
 import "./video_list.scss";
+import videoApi from '../api/videos.api'
 
 interface VideoListProps {
   searchQuery: string;
@@ -20,9 +21,8 @@ export function VideoList({ searchQuery, sortType }: VideoListProps) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3001/items");
-        const data = await response.json();
-        dispatch(fetchVideos(data));
+        const response = await videoApi.list()
+        dispatch(fetchVideos(response));
       } catch (error) {
         console.error("Error fetching videos:", error);
       }
