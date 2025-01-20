@@ -15,7 +15,7 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, onFilterChange }) => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [sortType, setSortType] = useState("newest");
   const [searchText, setSearchText] = useState("");
-  const [isModalOpen, setModalOpen] = useState(false); // Добавлено определение состояния для модального окна
+  const [isModalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -137,15 +137,14 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, onFilterChange }) => {
         </button>
       </div>
 
-      {/* Модальное окно */}
       {isModalOpen && (
         <div
           className="modal-overlay"
-          onClick={() => setModalOpen(false)} // Закрытие модального окна при клике вне него
+          onClick={() => setModalOpen(false)}
         >
           <div
             className="modal"
-            onClick={(e) => e.stopPropagation()} // Останавливаем клик внутри модального окна
+            onClick={(e) => e.stopPropagation()}
           >
             <h2>Create new card</h2>
             <form className="modal__form" onSubmit={handleOnSumbit}>

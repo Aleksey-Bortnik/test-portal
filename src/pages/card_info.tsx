@@ -11,18 +11,18 @@ export function CardInfo() {
     const navigate = useNavigate();
     const [video, setVideo] = useState<Video | null>(null);
 
-      useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const response = await videoApi.getById(id!)
-            setVideo(response);
-          } catch (error) {
-            console.error("Error fetching videos:", error);
-          }
-        };
-    
-        fetchData();
-      }, [id]);
+    useEffect(() => {
+    const fetchData = async () => {
+        try {
+        const response = await videoApi.getById(id!)
+        setVideo(response);
+        } catch (error) {
+        console.error("Error fetching videos:", error);
+        }
+    };
+
+    fetchData();
+    }, [id]);
 
     if (!video) {
         return <div className="card-info__error">
